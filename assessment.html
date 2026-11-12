@@ -60,8 +60,8 @@
       options: ["QB", "RB", "WR", "TE", "OL", "DL", "LB", "DB", "K / P / Other"] },
     { id: "goal", label: "What's your #1 goal right now?",
       options: ["Get recruited and earn college offers", "Get faster and stronger", "Better film and more exposure", "Not sure yet"] },
-    { id: "timing", label: "How soon do you want to get started?",
-      options: ["Right away", "Within 30 days", "In 1 to 3 months", "Just researching"] },
+    { id: "serious", label: "How serious are you about getting to the next level?",
+      options: ["All in. Ready to start now", "Very serious. Starting within 30 days", "Interested, but want to learn more", "Just looking around"] },
     { id: "budget", label: "What monthly investment are you comfortable with?",
       help: "Our programs range from $49 to $499 per month.",
       options: ["Under $50 / month", "$50 to $199 / month", "$200 to $499 / month", "$500+ / month"] },
@@ -77,7 +77,7 @@
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
 
   function qualified() {
-    return answers.budget !== "Under $50 / month" && answers.timing !== "Just researching";
+    return answers.budget !== "Under $50 / month" && answers.serious !== "Just looking around";
   }
 
   var contact = { first: "", last: "", phone: "", email: "" };
