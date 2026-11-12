@@ -63,7 +63,7 @@
     { id: "serious", label: "How serious are you about getting to the next level?",
       options: ["All in. Ready to start now", "Very serious. Starting within 30 days", "Interested, but want to learn more", "Just looking around"] },
     { id: "budget", label: "Are you ready to invest in reaching the next level?", dynamic: true,
-      options: ["Yes, I'm ready to invest now", "Yes, if it's the right fit", "I'd need to plan for it first", "No, I'm not able to invest right now"] },
+      options: ["Yes, I'm ready to invest now", "No, I'm not able to invest right now"] },
     { id: "decider", label: "If it's a fit, will the decision-maker(s) be on the call?",
       options: ["Yes", "No"] }
   ];
@@ -91,7 +91,7 @@
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
 
   function qualified() {
-    return (answers.budget === "Yes, I'm ready to invest now" || answers.budget === "Yes, if it's the right fit") &&
+    return answers.budget === "Yes, I'm ready to invest now" &&
       answers.serious !== "Just looking around";
   }
 
