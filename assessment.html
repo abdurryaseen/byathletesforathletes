@@ -62,7 +62,7 @@
       options: ["Play Division I", "Play Division II", "Play Division III", "Play NAIA or JUCO", "Be a great high school player", "Not sure yet"] },
     { id: "serious", label: "How serious are you about getting to the next level?",
       options: ["All in. Ready to start now", "Very serious. Starting within 30 days", "Interested, but want to learn more", "Just looking around"] },
-    { id: "budget", label: "What monthly investment are you comfortable with?",
+    { id: "budget", label: "What monthly investment are you comfortable with?", dynamic: true,
       help: "Our programs range from $49 to $499 per month.",
       options: ["Under $50 / month", "$50 to $199 / month", "$200 to $499 / month", "$500+ / month"] },
     { id: "decider", label: "If it's a fit, will the decision-maker(s) be on the call?",
@@ -73,6 +73,21 @@
   var bar = document.getElementById("aa-progress");
   var answers = {};
   var step = 0;
+
+  var GOAL_PHRASE = {
+    "Play Division I": "to play Division I",
+    "Play Division II": "to play Division II",
+    "Play Division III": "to play Division III",
+    "Play NAIA or JUCO": "to play NAIA or JUCO",
+    "Be a great high school player": "to become a great high school player"
+  };
+
+  function labelOf(q) {
+    if (!q.dynamic) return q.label;
+    var who = answers.who === "Athlete" ? "yourself" : "your athlete";
+    var goal = GOAL_PHRASE[answers.goal] || "to reach the next level";
+    return "How much are you willing to invest in " + who + " each month " + goal + "?";
+  }
 
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
 
@@ -91,7 +106,7 @@
   }
 
   function calUrl() {
-    var notes = "Athlete Assessment\n" + questions.map(function (q) { return q.label + " " + (answers[q.id] || "-"); }).join("\n");
+    var notes = "Athlete Assessment\n" + questions.map(function (q) { return labelOf(q) + " " + (answers[q.id] || "-"); }).join("\n");
     var params = "name=" + encodeURIComponent((contact.first + " " + contact.last).trim()) +
       "&email=" + encodeURIComponent(contact.email) +
       "&attendeePhoneNumber=" + encodeURIComponent(e164(contact.phone)) +
@@ -145,7 +160,7 @@
     var q = questions[step];
     bar.style.width = Math.round((step / TOTAL) * 100) + "%";
     body.innerHTML = '<p class="aa-step">Athlete Assessment &middot; ' + (step + 1) + " of " + TOTAL + "</p>" +
-      '<h1 class="aa-q">' + esc(q.label) + "</h1>" +
+      '<h1 class="aa-q">' + esc(labelOf(q)) + "</h1>" +
       (q.help ? '<p class="aa-help">' + esc(q.help) + "</p>" : "") +
       '<div class="aa-opts' + (q.grid ? " aa-grid" : "") + '">' +
       q.options.map(function (o) {
