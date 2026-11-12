@@ -100,6 +100,10 @@
     return CAL + "?notes=" + encodeURIComponent(notes);
   }
 
+  function canBook() {
+    return answers.decider === "Yes";
+  }
+
   function finish() {
     if (qualified()) {
       bar.style.width = "100%";
@@ -121,8 +125,10 @@
       }).join("") + "</div>" +
       '<div class="aa-nav">' +
       (step > 0 ? '<button type="button" class="aa-back">&larr; Back</button>' : "<span></span>") +
-      (step === TOTAL - 1 ? '<button type="button" class="aa-cta" id="aa-book"' + (answers[q.id] ? "" : " disabled") + ">Book Your Qualification Call</button>" : "") +
-      "</div>";
+      (step === TOTAL - 1 ? '<button type="button" class="aa-cta" id="aa-book"' + (canBook() ? "" : " disabled") + ">Book Your Qualification Call</button>" : "") +
+      "</div>" +
+      (q.id === "decider" && answers.decider === "No" ?
+        '<p role="alert" style="margin:14px 0 0;font-size:15px;line-height:1.5;color:#f87171">The decision-maker needs to be on the call. Choose a time when everyone who decides can join, then come back to book.</p>' : "");
     body.querySelectorAll(".aa-opt").forEach(function (b) {
       b.addEventListener("click", function () {
         answers[q.id] = b.getAttribute("data-v");
@@ -134,7 +140,7 @@
     var back = body.querySelector(".aa-back");
     if (back) back.addEventListener("click", function () { step--; render(); });
     var book = body.querySelector("#aa-book");
-    if (book) book.addEventListener("click", function () { if (answers[q.id]) finish(); });
+    if (book) book.addEventListener("click", function () { if (canBook()) finish(); });
   }
 
   function renderEssentials() {
