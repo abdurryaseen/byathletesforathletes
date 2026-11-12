@@ -172,6 +172,7 @@
     body.querySelectorAll(".aa-opt").forEach(function (b) {
       b.addEventListener("click", function () {
         answers[q.id] = b.getAttribute("data-v");
+        if (q.id === "budget" && answers.budget !== "Yes, I'm ready to invest now") { renderEssentials(); return; }
         step++;
         render();
       });
@@ -188,7 +189,7 @@
       '<a class="aa-cta" href="' + ESSENTIALS_SIX + '">Get 6 months for $250 (1 month free)</a>' +
       '<a class="aa-cta aa-alt" href="' + ESSENTIALS_MONTHLY + '">Or start monthly for $49</a>' +
       '<div class="aa-nav"><button type="button" class="aa-back">&larr; Change my answers</button><span></span></div></div>';
-    body.querySelector(".aa-back").addEventListener("click", function () { step = questions.length; render(); });
+    body.querySelector(".aa-back").addEventListener("click", function () { render(); });
   }
 
   render();
