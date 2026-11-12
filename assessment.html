@@ -62,9 +62,8 @@
       options: ["Play Division I", "Play Division II", "Play Division III", "Play NAIA or JUCO", "Be a great high school player", "Not sure yet"] },
     { id: "serious", label: "How serious are you about getting to the next level?",
       options: ["All in. Ready to start now", "Very serious. Starting within 30 days", "Interested, but want to learn more", "Just looking around"] },
-    { id: "budget", label: "What monthly investment are you comfortable with?", dynamic: true,
-      help: "Our programs range from $49 to $499 per month.",
-      options: ["Under $50 / month", "$50 to $199 / month", "$200 to $499 / month", "$500+ / month"] },
+    { id: "budget", label: "Are you ready to invest in reaching the next level?", dynamic: true,
+      options: ["Yes, I'm ready to invest now", "Yes, if it's the right fit", "I'd need to plan for it first", "No, I'm not able to invest right now"] },
     { id: "decider", label: "If it's a fit, will the decision-maker(s) be on the call?",
       options: ["Yes", "No"] }
   ];
@@ -86,13 +85,14 @@
     if (!q.dynamic) return q.label;
     var who = answers.who === "Athlete" ? "yourself" : "your athlete";
     var goal = GOAL_PHRASE[answers.goal] || "to reach the next level";
-    return "How much are you willing to invest in " + who + " each month " + goal + "?";
+    return "Are you ready to invest in " + who + " " + goal + "?";
   }
 
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
 
   function qualified() {
-    return answers.budget !== "Under $50 / month" && answers.serious !== "Just looking around";
+    return (answers.budget === "Yes, I'm ready to invest now" || answers.budget === "Yes, if it's the right fit") &&
+      answers.serious !== "Just looking around";
   }
 
   var contact = { first: "", last: "", phone: "", email: "" };
