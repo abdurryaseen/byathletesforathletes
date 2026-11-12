@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en" style="color-scheme:dark;background:#0a0d0b">
+<head><meta name="robots" content="noindex">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<link rel="stylesheet" href="assets/site.css"/>
+<meta name="description" content="Answer a few quick questions about your athlete, then book your call with the By Athletes 4 Athletes coaches."/>
+<link rel="icon" type="image/png" href="assets/favicon.png"/>
+<link rel="apple-touch-icon" href="assets/favicon.png"/>
+<title>Athlete Assessment | By Athletes 4 Athletes</title>
+<style>
+.aa-wrap{max-width:620px;margin:0 auto;padding:24px 24px 64px}
+.aa-card{border-radius:24px;border:1px solid rgba(34,197,94,.45);background:linear-gradient(135deg,rgba(34,197,94,.10),rgba(255,255,255,.02));box-shadow:0 0 60px rgba(34,197,94,.12);padding:32px}
+.aa-bar{height:6px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden;margin-bottom:22px}
+.aa-bar>span{display:block;height:100%;background:#22c55e;transition:width .25s}
+.aa-step{font-size:12px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#22c55e;margin:0}
+.aa-q{margin:10px 0 20px;font-size:28px;line-height:1.15;font-weight:900;text-transform:uppercase;letter-spacing:-.01em}
+.aa-help{margin:-10px 0 18px;font-size:15px;line-height:1.5;color:rgba(255,255,255,.6)}
+.aa-opts{display:grid;gap:10px}
+.aa-opts.aa-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.aa-opt{width:100%;text-align:left;border-radius:14px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.03);color:#fff;padding:15px 18px;font-size:16px;font-weight:600;cursor:pointer;transition:border-color .15s,background .15s}
+.aa-grid .aa-opt{text-align:center;padding:15px 8px}
+.aa-opt:hover{border-color:rgba(34,197,94,.6)}
+.aa-opt.aa-sel{border-color:#22c55e;background:rgba(34,197,94,.14)}
+.aa-nav{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:22px;min-height:48px}
+.aa-back{border:0;background:none;color:rgba(255,255,255,.6);font-size:15px;font-weight:600;cursor:pointer;padding:8px 0}
+.aa-back:hover{color:#fff}
+.aa-cta{display:inline-block;border:0;border-radius:999px;background:#22c55e;color:#000;font-size:16px;font-weight:800;padding:14px 26px;cursor:pointer;text-decoration:none;text-align:center}
+.aa-cta[disabled]{opacity:.35;cursor:not-allowed}
+.aa-cta.aa-alt{background:transparent;color:#22c55e;border:1px solid rgba(34,197,94,.6)}
+.aa-end p{font-size:16px;line-height:1.6;color:rgba(255,255,255,.72);margin:0 0 18px}
+.aa-end .aa-cta{display:block;width:100%;margin-top:10px}
+@media (max-width:520px){.aa-card{padding:22px}.aa-q{font-size:22px}.aa-opts.aa-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.aa-nav .aa-cta{flex:1}}
+</style>
+</head>
+<body>
+<div class="min-h-screen bg-[#0a0d0b] text-white antialiased" style="color-scheme:dark">
+<header class="mx-auto flex max-w-6xl items-center justify-between px-6 py-5"><a href="/landing" class="text-lg font-extrabold uppercase tracking-wider">By Athletes <span style="color:#22c55e">For</span> Athletes</a><div class="flex items-center gap-2 sm:gap-3"><a href="https://whop.com/joined/" class="rounded-full px-5 py-2 text-sm font-bold text-black transition hover:brightness-110" style="background:#22c55e">Member Login</a></div></header>
+<main class="aa-wrap">
+  <div class="aa-card">
+    <div class="aa-bar"><span id="aa-progress" style="width:0"></span></div>
+    <div id="aa-body" aria-live="polite">
+      <noscript><p>Please turn on JavaScript to take the assessment, or <a href="https://cal.com/team/b4a/qualification" style="color:#22c55e;text-decoration:underline">book a call directly</a>.</p></noscript>
+    </div>
+  </div>
+</main>
+<footer class="border-t border-white/10 px-6 py-10"><p class="mx-auto max-w-3xl text-center text-xs leading-relaxed text-white/45">By Athletes 4 Athletes provides educational content only. Participation does not guarantee scholarships, college offers, roster spots, or recruiting outcomes.</p><p class="mt-4 text-center text-xs text-white/55"><a href="/legal#terms" class="underline hover:text-white">Terms of Service</a> · <a href="/legal#privacy" class="underline hover:text-white">Privacy Policy</a> · <a href="/legal#refunds" class="underline hover:text-white">Refund Policy</a></p><p class="mt-4 text-center text-xs text-white/45">Contact: <a href="mailto:yaseen@byathletesforathletes.com" class="underline hover:text-white">yaseen@byathletesforathletes.com</a></p><p class="mt-2 text-center text-xs text-white/35">© 2026 By Athletes 4 Athletes. All rights reserved.</p></footer>
+</div>
+<script>
+(function () {
+  var CAL = "https://cal.com/team/b4a/qualification";
+  var ESSENTIALS_MONTHLY = "https://whop.com/checkout/plan_C9eWqeVcC6Q8r";
+  var ESSENTIALS_SIX = "https://whop.com/checkout/plan_2INZjFknRnxja";
+
+  var questions = [
+    { id: "who", label: "Who's filling this out?", options: ["Parent / guardian", "Athlete"] },
+    { id: "grade", label: "What grade is the athlete in?",
+      options: ["8th or younger", "9th grade", "10th grade", "11th grade", "12th grade", "Post-grad / transfer"] },
+    { id: "position", label: "What position do they play?", grid: true,
+      options: ["QB", "RB", "WR", "TE", "OL", "DL", "LB", "DB", "K / P / Other"] },
+    { id: "goal", label: "What's your #1 goal right now?",
+      options: ["Get recruited and earn college offers", "Get faster and stronger", "Better film and more exposure", "Not sure yet"] },
+    { id: "timing", label: "How soon do you want to get started?",
+      options: ["Right away", "Within 30 days", "In 1 to 3 months", "Just researching"] },
+    { id: "budget", label: "What monthly investment are you comfortable with?",
+      help: "Our programs range from $49 to $499 per month.",
+      options: ["Under $50 / month", "$50 to $199 / month", "$200 to $499 / month", "$500+ / month"] },
+    { id: "decider", label: "If it's a fit, will the decision-maker(s) be on the call?",
+      options: ["Yes", "No"] }
+  ];
+
+  var body = document.getElementById("aa-body");
+  var bar = document.getElementById("aa-progress");
+  var answers = {};
+  var step = 0;
+
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+
+  function qualified() {
+    return answers.budget !== "Under $50 / month" && answers.timing !== "Just researching";
+  }
+
+  function calUrl() {
+    var notes = "Athlete Assessment\n" + questions.map(function (q) { return q.label + " " + (answers[q.id] || "-"); }).join("\n");
+    return CAL + "?notes=" + encodeURIComponent(notes);
+  }
+
+  function render() {
+    var q = questions[step];
+    var last = step === questions.length - 1;
+    bar.style.width = Math.round((step / questions.length) * 100) + "%";
+    body.innerHTML = '<p class="aa-step">Athlete Assessment &middot; ' + (step + 1) + " of " + questions.length + "</p>" +
+      '<h1 class="aa-q">' + esc(q.label) + "</h1>" +
+      (q.help ? '<p class="aa-help">' + esc(q.help) + "</p>" : "") +
+      '<div class="aa-opts' + (q.grid ? " aa-grid" : "") + '">' +
+      q.options.map(function (o) {
+        return '<button type="button" class="aa-opt' + (answers[q.id] === o ? " aa-sel" : "") + '" data-v="' + esc(o) + '">' + esc(o) + "</button>";
+      }).join("") + "</div>" +
+      '<div class="aa-nav">' +
+      (step > 0 ? '<button type="button" class="aa-back">&larr; Back</button>' : "<span></span>") +
+      (last ? '<button type="button" class="aa-cta" id="aa-book"' + (answers[q.id] ? "" : " disabled") + ">Book Your Qualification Call</button>" : "") +
+      "</div>";
+    body.querySelectorAll(".aa-opt").forEach(function (b) {
+      b.addEventListener("click", function () {
+        answers[q.id] = b.getAttribute("data-v");
+        if (!last) step++;
+        render();
+      });
+    });
+    var back = body.querySelector(".aa-back");
+    if (back) back.addEventListener("click", function () { step--; render(); });
+    var book = body.querySelector("#aa-book");
+    if (book) book.addEventListener("click", function () {
+      if (!answers[q.id]) return;
+      if (qualified()) {
+        bar.style.width = "100%";
+        window.location.href = calUrl();
+      } else {
+        renderEssentials();
+      }
+    });
+  }
+
+  function renderEssentials() {
+    bar.style.width = "100%";
+    body.innerHTML = '<div class="aa-end"><p class="aa-step">Your best next step</p>' +
+      '<h1 class="aa-q">Start with Recruiting Essentials</h1>' +
+      "<p>Based on your answers, the best place to start is Recruiting Essentials: the full How to Get Recruited video course, a grade-by-grade roadmap, a monthly live coaching call with former Division I receivers, and our member community.</p>" +
+      '<a class="aa-cta" href="' + ESSENTIALS_SIX + '">Get 6 months for $250 (1 month free)</a>' +
+      '<a class="aa-cta aa-alt" href="' + ESSENTIALS_MONTHLY + '">Or start monthly for $49</a>' +
+      '<div class="aa-nav"><button type="button" class="aa-back">&larr; Change my answers</button><span></span></div></div>';
+    body.querySelector(".aa-back").addEventListener("click", function () { step = questions.length - 1; render(); });
+  }
+
+  render();
+})();
+</script>
+</body>
+</html>
