@@ -99,68 +99,23 @@
       answers.serious !== "Just looking around";
   }
 
-  var contact = { first: "", last: "", phone: "", email: "" };
-  var TOTAL = questions.length + 1;
-
-  function e164(phone) {
-    var d = phone.replace(/\D/g, "");
-    if (d.length === 10) return "+1" + d;
-    if (d.length === 11 && d.charAt(0) === "1") return "+" + d;
-    return phone.trim().charAt(0) === "+" && d.length >= 10 && d.length <= 15 ? "+" + d : "";
-  }
+  var TOTAL = questions.length;
 
   function calUrl() {
     var notes = "Athlete Assessment\n" + questions.map(function (q) { return labelOf(q) + " " + (answers[q.id] || "-"); }).join("\n");
-    var params = "name=" + encodeURIComponent((contact.first + " " + contact.last).trim()) +
-      "&email=" + encodeURIComponent(contact.email) +
-      "&attendeePhoneNumber=" + encodeURIComponent(e164(contact.phone)) +
-      "&notes=" + encodeURIComponent(notes);
-    return CAL + "?" + params;
+    return CAL + "?notes=" + encodeURIComponent(notes);
   }
 
-  function field(id, label, type, auto, value) {
-    return '<label style="display:block"><span style="display:block;margin-bottom:6px;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.7)">' + label + "</span>" +
-      '<input id="aa-' + id + '" type="' + type + '" autocomplete="' + auto + '" required value="' + esc(value) + '" ' +
-      'style="box-sizing:border-box;width:100%;min-width:0;border-radius:12px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.04);color:#fff;padding:13px 14px;font-size:16px;outline:none"></label>';
-  }
-
-  function renderContact() {
-    bar.style.width = Math.round((questions.length / TOTAL) * 100) + "%";
-    body.innerHTML = '<p class="aa-step">Athlete Assessment &middot; ' + TOTAL + " of " + TOTAL + "</p>" +
-      '<h1 class="aa-q">Where should we send your call details?</h1>' +
-      '<form id="aa-form" novalidate><div style="display:grid;gap:14px;grid-template-columns:repeat(2,minmax(0,1fr))">' +
-      field("first", "First name", "text", "given-name", contact.first) +
-      field("last", "Last name", "text", "family-name", contact.last) + "</div>" +
-      '<div style="display:grid;gap:14px;margin-top:14px">' +
-      field("phone", "Phone number", "tel", "tel", contact.phone) +
-      field("email", "Email", "email", "email", contact.email) + "</div>" +
-      '<p id="aa-err" role="alert" style="min-height:20px;margin:12px 0 0;font-size:14px;color:#f87171"></p>' +
-      '<div class="aa-nav"><button type="button" class="aa-back">&larr; Back</button>' +
-      '<button type="submit" class="aa-cta">Book Your Qualification Call</button></div></form>';
-    var form = body.querySelector("#aa-form");
-    ["first", "last", "phone", "email"].forEach(function (k) {
-      body.querySelector("#aa-" + k).addEventListener("input", function (e) { contact[k] = e.target.value; });
-    });
-    body.querySelector(".aa-back").addEventListener("click", function () { step = questions.length - 1; render(); });
-    form.addEventListener("submit", function (e) {
-      e.preventDefault();
-      var err = body.querySelector("#aa-err");
-      if (!contact.first.trim() || !contact.last.trim()) { err.textContent = "Please enter your first and last name."; return; }
-      if (!e164(contact.phone)) { err.textContent = "Please enter a valid phone number."; return; }
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact.email.trim())) { err.textContent = "Please enter a valid email address."; return; }
-      contact.email = contact.email.trim();
-      if (qualified()) {
-        bar.style.width = "100%";
-        window.location.href = calUrl();
-      } else {
-        renderEssentials();
-      }
-    });
-    body.querySelector("#aa-first").focus();
+  function finish() {
+    if (qualified()) {
+      bar.style.width = "100%";
+      window.location.href = calUrl();
+    } else {
+      renderEssentials();
+    }
   }
 
   function render() {
-    if (step >= questions.length) { renderContact(); return; }
     var q = questions[step];
     bar.style.width = Math.round((step / TOTAL) * 100) + "%";
     body.innerHTML = '<p class="aa-step">Athlete Assessment &middot; ' + (step + 1) + " of " + TOTAL + "</p>" +
@@ -172,17 +127,20 @@
       }).join("") + "</div>" +
       '<div class="aa-nav">' +
       (step > 0 ? '<button type="button" class="aa-back">&larr; Back</button>' : "<span></span>") +
+      (step === TOTAL - 1 ? '<button type="button" class="aa-cta" id="aa-book"' + (answers[q.id] ? "" : " disabled") + ">Book Your Qualification Call</button>" : "") +
       "</div>";
     body.querySelectorAll(".aa-opt").forEach(function (b) {
       b.addEventListener("click", function () {
         answers[q.id] = b.getAttribute("data-v");
         if (q.id === "budget" && answers.budget !== "Yes, I'm ready to invest now") { renderEssentials(); return; }
-        step++;
+        if (step < TOTAL - 1) step++;
         render();
       });
     });
     var back = body.querySelector(".aa-back");
     if (back) back.addEventListener("click", function () { step--; render(); });
+    var book = body.querySelector("#aa-book");
+    if (book) book.addEventListener("click", function () { if (answers[q.id]) finish(); });
   }
 
   function renderEssentials() {
